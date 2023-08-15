@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import Message from "./Message";
 
 function App() {
+  // Whenever we need to change something in UI we change the state . 
+  // To display anything in UI
+  const [advice,setAdvice] = useState("");
+   const[count,setCount]=useState(0)
+
+   async function getAdvice(){
+      const resp = await fetch("https://api.adviceslip.com/advice");
+      const data = await resp.json();
+      // console.log(data)
+      // using setAdvice method to update the advice
+      setAdvice(data.slip.advice);
+      // using setCount to update the time
+      setCount((c)=>c+1)
+
+  }
+
+  // we are using useEffect() to show one piece of advice every time we load the page.
+  useEffect(function(){
+    getAdvice();
+  },[])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>{advice}</h1>
+      <button onClick={getAdvice}>Get advice</button>
+      <Message count={count} />
     </div>
-  );
+  )
 }
 
 export default App;
